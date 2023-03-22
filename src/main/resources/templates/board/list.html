@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <style>
+    table, td{
+      margin: auto;
+      border: black 1px solid;
+      text-align: center;
+    }
+    th{
+      font-size: 18px;
+    }
+    button{
+      margin: auto;
+      text-align: center;
+    }
+    a{
+      text-decoration: none;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <th>게시판</th>
+    <tr>
+      <td><input id="totalCheck" type="checkbox"></td>
+      <td>번호</td>
+      <td>제목</td>
+      <td>작성자</td>
+      <td>조회수</td>
+    </tr>
+
+    <!-- 게시글 받아오기  -->
+    <th:block th:if="${!#lists.isEmpty(boards)}">
+      <tr th:each="board: ${boards}">
+        <td class="check"><input th:id="${board.id}" type="checkbox"></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.id}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.title}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.writer}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.readed}"></a></td>
+      </tr>
+    </th:block>
+  </table>
+
+  <button><a th:href="@{board/form}">글 작성</a></button>
+  <button id="del">삭제하기</button>
+
+<script>
+  /**
+   * 체크박스 전체 클릭
+   */
+  $("#totalCheck").on("click", function (){
+    let check = true;
+    if ($(this).is(":checked") == false) {
+      check = false;
+    }
+
+    $("td.check > input[type=checkbox]").each(function (){
+      if ($(this).is(":checked") == true && check == true) return;
+      $(this).attr("checked", check);
+      $(this).prop("checked", check).trigger("change");
+    });
+  });
+
+  /**
+   * 선택 삭제하기
+   */
+  $("#del").on("click", function () {
+    alert("삭제")
+    const checkBoxArr = [];
+    $("td.check > input[type=checkbox]").each(function () {
+      if ($(this).is(":checked") == true) {
+        checkBoxArr.push($(this).attr("id"));
+      }
+    });
+
+    $.deleteRow(checkBoxArr);
+  });
+
+  /**
+   * 단일 삭제
+   */
+  $(document).on("click", "td[name=rowDel] > button", function (){
+    const checkBoxArr = [];
+    const $check = $(this).closest("td").siblings(".check").children("input[type=checkbox]").attr("id");
+    checkBoxArr.push($check);
+    $.deleteRow(checkBoxArr);
+  });
+
+  $.deleteRow = function (checkBoxArr){
+    $.ajax({
+      url: "/ajax/del",
+      data: {
+        checkBoxArr
+      },
+      dataType:"text",
+      type: "POST",
+      cache: false,
+      success: function (result) {
+        if (result === "ok"){
+          $.each(checkBoxArr, function (index, element){
+            $("#"+element).closest("tr").remove();
+          });
+        }
+      },
+      error: function (xhr, status, error) {
+        alert(error);
+      }
+    });
+  }
+
+  /**
+   * 단일 체크박스 삭제버튼 생성/삭제
+   */
+  $("td.check > input[type=checkbox]").on("change", function (){
+    if ($(this).is(":checked") == true) {
+      $(this).closest("tr").append("<td name='rowDel'><button>삭제하기</button></td>");
+    }else{
+      $(this).closest("tr").children("td[name=rowDel]").remove();
+    }
+  });
+
+
+</script>
+</body>
+</html>
