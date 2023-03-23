@@ -49,6 +49,25 @@
   <button><a th:href="@{board/form}">글 작성</a></button>
   <button id="del">삭제하기</button>
 
+  <div>
+    <ul>
+      <li th:if="${pageBlock.isPrev}">
+        <a th:href="@{/board(currentPage=${pageBlock.startOfPageBlock-1})}">&lsaquo;</a>
+      </li>
+      <th:block th:each="num : ${#numbers.sequence(pageBlock.startOfPageBlock, pageBlock.endOfPageBlock)}">
+        <li th:if="${num eq pageBlock.currentPage}" style="color: blue">
+          <span>[[${num}]]</span>
+        </li>
+        <li th:unless="${num eq pageBlock.currentPage}">
+          <a th:href="@{/board(currentPage=${num})}">[[${num}]]</a>
+        </li>
+      </th:block>
+      <li th:if="${pageBlock.isNext}">
+        <a th:href="@{/board(currentPage=${pageBlock.endOfPageBlock+1})}">&rsaquo;</a>
+      </li>
+    </ul>
+  </div>q
+
 <script>
   /**
    * 체크박스 전체 클릭

@@ -5,8 +5,15 @@
 <mapper namespace="education.top.repository.BoardMapper">
 
     <select id="findAll" resultType="Board">
-        SELECT * FROM Board
-        ORDER BY id DESC
+        SELECT b.*
+        FROM (
+            SELECT ROWNUM no, t.*
+            FROM(
+                SELECT * FROM Board
+                ORDER BY id DESC
+                )t
+            )b
+        WHERE b.no BETWEEN #{begin} and #{end}
     </select>
 
     <insert id="write">
@@ -40,4 +47,7 @@
         WHERE id = #{id}
     </update>
 
+    <select id="getTotalRecords" resultType="Integer">
+        SELECT COUNT(*) FROM Board
+    </select>
 </mapper>

@@ -15,8 +15,10 @@ public class BoardService {
     @Autowired
     private BoardMapper boardMapper;
 
-    public ArrayList<Board> findAllBoard(){
-        return boardMapper.findAll();
+    public ArrayList<Board> findAllBoard(int currentPage, int numberPerPage){
+        int begin = PageService.begin(currentPage, numberPerPage);
+        int end = PageService.end(currentPage, numberPerPage);
+        return boardMapper.findAll(begin, end);
     }
 
     public Board findBoard(Long id){
@@ -41,5 +43,9 @@ public class BoardService {
 
     public void read(Long id){
         boardMapper.read(id);
+    }
+
+    public int getTotalRecords(){
+        return boardMapper.getTotalRecords();
     }
 }

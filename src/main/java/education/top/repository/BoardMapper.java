@@ -9,11 +9,11 @@ import java.util.List;
 @Mapper
 public interface BoardMapper {
 
-    ArrayList<Board> findAll();
+    ArrayList<Board> findAll(int begin, int end);
 
     Board findById(Long id);
 
-    Integer write(String title, String writer, String content);
+    void write(String title, String writer, String content);
 
     void delete(Long id);
 
@@ -22,4 +22,6 @@ public interface BoardMapper {
     void update(Long id, String title, String content);
 
     void read(Long id);
+
+    Integer getTotalRecords();
 }

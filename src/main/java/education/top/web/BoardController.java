@@ -1,5 +1,7 @@
 package education.top.web;
 
+import education.top.com.paging.PageBlock;
+import education.top.com.paging.PageService;
 import education.top.domain.Board;
 import education.top.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +23,17 @@ public class BoardController {
     private BoardService boardService;
 
     @GetMapping
-    public String board(Model model){
-        ArrayList<Board> boards = boardService.findAllBoard();
-        log.debug("게시글 개수 = {}", boards.size());
-        model.addAttribute("boards", boards);
+    public String board(Model model, @RequestParam(defaultValue = "1") int currentPage){
+
+        //페이징 처리
+        int numberPerPage = 5;
+        int numberOfPageBlock = 10;
+        int totalPage = (int) Math.ceil((double) boardService.getTotalRecords()/numberPerPage);
+        log.debug("totalRecords ={}", totalPage);
+        PageBlock pageBlock = PageService.pagingService(currentPage, numberPerPage, numberOfPageBlock, totalPage);
+
+        model.addAttribute("pageBlock", pageBlock);
+        model.addAttribute("boards", boardService.findAllBoard(currentPage, numberPerPage));
         return "board/list";
     }
 
