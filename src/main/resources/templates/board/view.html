@@ -47,7 +47,7 @@
         <td width="400" height="300"><textarea th:field="*{content}" name="content" style="height: 300px; width: 400px" readonly></textarea></td>
       </tr>
     </table>
-    <button type="button"><a href="/board">목록으로</a></button>
+    <button type="button"><a th:href="@{/board(currentPage=${currentPage})}">목록으로</a></button>
     <button type="button" style="margin-left: 30px"><a th:href="@{/board/edit/{id}(id=${board.id})}">수정하기</a></button>
     <input type="submit" value="삭제하기" width="10px" style="margin-left: 30px">
   </form>

@@ -9,20 +9,20 @@
         FROM (
             SELECT ROWNUM no, t.*
             FROM(
-                SELECT * FROM Board
+                SELECT id, title, writer, content, rdate, readed FROM Board
                 ORDER BY id DESC
                 )t
             )b
         WHERE b.no BETWEEN #{begin} and #{end}
     </select>
 
-    <insert id="write">
+    <insert id="write" parameterType="Board">
         INSERT INTO Board
         VALUES (board_sequence.nextval, #{title}, #{writer}, #{content}, sysdate, 0)
     </insert>
 
     <select id="findById" resultType="Board">
-        SELECT * FROM Board
+        SELECT id, title, writer, content, rdate, readed FROM Board
         WHERE id = #{id}
     </select>
 
@@ -37,7 +37,7 @@
                           </foreach>
     </delete>
 
-    <update id="update">
+    <update id="update" parameterType="Board">
         UPDATE Board SET title = #{title}, content = #{content}
         WHERE id = #{id}
     </update>

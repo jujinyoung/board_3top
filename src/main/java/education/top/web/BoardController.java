@@ -50,15 +50,16 @@ public class BoardController {
             return "board/form";
         }
         log.debug(board.getTitle());
-        boardService.write(board.getTitle(), board.getWriter(), board.getContent());
+        boardService.write(board);
         return "redirect:/board";
     }
 
     @GetMapping("/view/{id}")
-    public String view(@PathVariable Long id, Model model){
+    public String view(@PathVariable Long id, Model model, @RequestParam(defaultValue = "1") int currentPage){
         boardService.read(id);
         Board board = boardService.findBoard(id);
         model.addAttribute("board", board);
+        model.addAttribute("currentPage", currentPage);
         return "board/view";
     }
 

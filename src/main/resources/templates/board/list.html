@@ -24,7 +24,7 @@
   </style>
 </head>
 <body>
-  <table>
+  <table class="board">
     <th>게시판</th>
     <tr>
       <td><input id="totalCheck" type="checkbox"></td>
@@ -36,12 +36,12 @@
 
     <!-- 게시글 받아오기  -->
     <th:block th:if="${!#lists.isEmpty(boards)}">
-      <tr th:each="board: ${boards}">
+      <tr class="row" th:each="board: ${boards}">
         <td class="check"><input th:id="${board.id}" type="checkbox"></td>
-        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.id}"></a></td>
-        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.title}"></a></td>
-        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.writer}"></a></td>
-        <td><a th:href="@{/board/view/{id}(id= ${board.id})}" th:text="${board.readed}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id}, currentPage=${pageBlock.currentPage})}" th:text="${board.id}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id}, currentPage=${pageBlock.currentPage})}" th:text="${board.title}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id}, currentPage=${pageBlock.currentPage})}" th:text="${board.writer}"></a></td>
+        <td><a th:href="@{/board/view/{id}(id= ${board.id}, currentPage=${pageBlock.currentPage})}" th:text="${board.readed}"></a></td>
       </tr>
     </th:block>
   </table>
@@ -66,9 +66,9 @@
         <a th:href="@{/board(currentPage=${pageBlock.endOfPageBlock+1})}">&rsaquo;</a>
       </li>
     </ul>
-  </div>q
+  </div>
 
-<script>
+<script th:inline="javascript">
   /**
    * 체크박스 전체 클릭
    */
@@ -91,13 +91,14 @@
   $("#del").on("click", function () {
     alert("삭제")
     const checkBoxArr = [];
+    const currentPage = [[${pageBlock.currentPage}]];
     $("td.check > input[type=checkbox]").each(function () {
       if ($(this).is(":checked") == true) {
         checkBoxArr.push($(this).attr("id"));
       }
     });
 
-    $.deleteRow(checkBoxArr);
+    $.deleteRow(checkBoxArr, currentPage);
   });
 
   /**
@@ -105,26 +106,37 @@
    */
   $(document).on("click", "td[name=rowDel] > button", function (){
     const checkBoxArr = [];
+    const currentPage = [[${pageBlock.currentPage}]];
     const $check = $(this).closest("td").siblings(".check").children("input[type=checkbox]").attr("id");
     checkBoxArr.push($check);
-    $.deleteRow(checkBoxArr);
+    $.deleteRow(checkBoxArr,currentPage);
   });
 
-  $.deleteRow = function (checkBoxArr){
+  $.deleteRow = function (checkBoxArr, currentPage){
     $.ajax({
       url: "/ajax/del",
       data: {
-        checkBoxArr
+        checkBoxArr,
+        currentPage
       },
-      dataType:"text",
+      dataType:"json",
       type: "POST",
       cache: false,
       success: function (result) {
-        if (result === "ok"){
-          $.each(checkBoxArr, function (index, element){
-            $("#"+element).closest("tr").remove();
-          });
-        }
+        $("tr.row").each(function () {
+          $(this).remove();
+        });
+
+        $.each(result, function (key, value){
+          const link = "/board/view/" + value.id + "?currentPage=" +  currentPage;
+          $("table.board").append("<tr class='row'>" +
+                  "<td class='check'><input id='"+ value.id +"' type='checkbox'></td>" +
+                  "<td><a href='" + link + "'></a>" + value.id +"</td>" +
+                  "<td><a href='" + link + "'>" + value.title +"</a></td>" +
+                  "<td><a href='" + link + "'>" + value.writer + "</td>" +
+                  "<td><a href='" + link + "'>" + value.readed +"</a></td>"
+                  + "</tr>")
+        });
       },
       error: function (xhr, status, error) {
         alert(error);
@@ -135,7 +147,7 @@
   /**
    * 단일 체크박스 삭제버튼 생성/삭제
    */
-  $("td.check > input[type=checkbox]").on("change", function (){
+  $(document).on("change", "td.check > input[type=checkbox]", function (){
     if ($(this).is(":checked") == true) {
       $(this).closest("tr").append("<td name='rowDel'><button>삭제하기</button></td>");
     }else{

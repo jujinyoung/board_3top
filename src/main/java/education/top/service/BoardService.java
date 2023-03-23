@@ -25,8 +25,8 @@ public class BoardService {
         return boardMapper.findById(id);
     }
 
-    public void write(String title, String writer, String content){
-        boardMapper.write(title, writer, content);
+    public void write(Board board){
+        boardMapper.write(board);
     }
 
     public void delete(Long id){
@@ -38,7 +38,7 @@ public class BoardService {
     }
 
     public void update(Board board){
-        boardMapper.update(board.getId(), board.getTitle(), board.getContent());
+        boardMapper.update(board);
     }
 
     public void read(Long id){

@@ -13,13 +13,13 @@ public interface BoardMapper {
 
     Board findById(Long id);
 
-    void write(String title, String writer, String content);
+    void write(Board board);
 
     void delete(Long id);
 
     void deleteMulti(List<Long> ids);
 
-    void update(Long id, String title, String content);
+    void update(Board board);
 
     void read(Long id);
 
