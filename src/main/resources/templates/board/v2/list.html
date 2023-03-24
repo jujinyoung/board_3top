@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <style>
+    table, td{
+      margin: auto;
+      border: black 1px solid;
+      text-align: center;
+    }
+    th{
+      font-size: 18px;
+    }
+    button{
+      margin: auto;
+      text-align: center;
+    }
+    a{
+      text-decoration: none;
+      color: black;
+    }
+    td[name=title]:hover{
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+ <form th:action th:name="searchForm">
+   <input type="hidden" th:value="${pageBlock.currentPage}" th:name="currentPage">
+   <input type="hidden" th:value="${pageBlock.numberPerPage}" th:name="numberPerPage">
+   <select name="searchCondition">
+     <th:block th:each="comCode : ${comCodes}">
+       <th:block th:if="${comCode.comGrpCd eq '01'}">
+         <option th:if="${comCode.comCode} eq ${searchCondition}" th:text="${comCode.codeDesc}" th:value="${comCode.comCode}" selected></option>
+         <option th:unless="${comCode.comCode} eq ${searchCondition}" th:text="${comCode.codeDesc}" th:value="${comCode.comCode}"></option>
+       </th:block>
+     </th:block>
+   </select>
+   <input id="searchWord" type="text" placeholder="검색어를 입력해주세요" th:value="${searchWord}" th:name="searchWord">
+   <input type="submit" value="검색">
+ </form>
+
+  <button id="del">선택삭제</button>
+  <button id="write">글 작성</button>
+
+  <table class="board">
+    <tr>
+      <td><input id="totalCheck" type="checkbox"></td>
+      <td>번호</td>
+      <td>제목</td>
+      <td>작성자</td>
+      <td>작성일자(YYYY-MM-DD HH24.MI.SS)</td>
+    </tr>
+
+    <!-- 게시글 받아오기  -->
+    <th:block th:if="${!#lists.isEmpty(boards)}">
+      <tr class="row" th:each="board: ${boards}">
+        <td class="check"><input th:id="${board.id}" type="checkbox"></td>
+        <td th:text="${boardStat.count}"></td>
+        <td th:text="${board.title}" th:name="title"></td>
+        <td th:text="${board.writer}"></td>
+        <td th:text="${{board.rdate}}"></td>
+      </tr>
+    </th:block>
+  </table>
+
+  <div>
+    <ul>
+      <li th:if="${pageBlock.isPrev}">
+        <a th:href="@{/board/v2(currentPage=${pageBlock.startOfPageBlock-1}, numberPerPage=${pageBlock.numberPerPage}, searchCondition=${searchCondition}, searchWord=${searchWord})}">&lsaquo;</a>
+      </li>
+      <th:block th:each="num : ${#numbers.sequence(pageBlock.startOfPageBlock, pageBlock.endOfPageBlock)}">
+        <li th:if="${num eq pageBlock.currentPage}" style="font-weight: bold">
+          <span>[[${num}]]</span>
+        </li>
+        <li th:unless="${num eq pageBlock.currentPage}">
+          <a th:href="@{/board/v2(currentPage=${num}, numberPerPage=${pageBlock.numberPerPage}, searchCondition=${searchCondition}, searchWord=${searchWord})}">[[${num}]]</a>
+        </li>
+      </th:block>
+      <li th:if="${pageBlock.isNext}">
+        <a th:href="@{/board/v2(currentPage=${pageBlock.endOfPageBlock+1}, numberPerPage=${pageBlock.numberPerPage}, searchCondition=${searchCondition}, searchWord=${searchWord})}">&rsaquo;</a>
+      </li>
+    </ul>
+  </div>
+
+  <select name="pageCount">
+    <th:block th:each="comCode : ${comCodes}">
+      <th:block th:if="${comCode.comGrpCd eq '02'}">
+        <option th:if="${comCode.codeDesc} eq ${pageBlock.numberPerPage}+'개'" th:text="${comCode.codeDesc}" selected></option>
+        <option th:unless="${comCode.codeDesc} eq ${pageBlock.numberPerPage}+'개'" th:text="${comCode.codeDesc}"></option>
+      </th:block>
+    </th:block>
+  </select>
+
+<script th:inline="javascript">
+  /**
+   * 체크박스 전체 클릭
+   */
+  $("#totalCheck").on("click", function (){
+    let check = true;
+    if ($(this).is(":checked") == false) {
+      check = false;
+    }
+
+    $("td.check > input[type=checkbox]").each(function (){
+      if ($(this).is(":checked") == true && check == true) return;
+      $(this).attr("checked", check);
+      $(this).prop("checked", check).trigger("change");
+    });
+  });
+
+  /**
+   * 선택 삭제하기
+   */
+  $("#del").on("click", function () {
+    const checkBoxArr = [];
+    const currentPage = [[${pageBlock.currentPage}]];
+    $("td.check > input[type=checkbox]").each(function () {
+      if ($(this).is(":checked") == true) {
+        checkBoxArr.push($(this).attr("id"));
+      }
+    });
+
+    console.log(checkBoxArr);
+    if (!$.isEmptyObject(checkBoxArr)){
+      alert(checkBoxArr.length + "건 삭제 완료");
+      $.deleteRow(checkBoxArr, currentPage);
+    }else {
+      alert("선택된 체크박스가 없습니다.")
+    }
+  });
+
+  /**
+   * 단일 삭제
+   */
+  $(document).on("click", "td[name=rowDel] > button", function (){
+    const checkBoxArr = [];
+    const currentPage = [[${pageBlock.currentPage}]];
+    const $check = $(this).closest("td").siblings(".check").children("input[type=checkbox]").attr("id");
+    checkBoxArr.push($check);
+    $.deleteRow(checkBoxArr,currentPage);
+  });
+
+  $.deleteRow = function (checkBoxArr, currentPage){
+    $.ajax({
+      url: "/ajax/del",
+      data: {
+        checkBoxArr,
+        currentPage
+      },
+      dataType:"json",
+      type: "POST",
+      cache: false,
+      success: function (result) {
+        $("tr.row").each(function () {
+          $(this).remove();
+        });
+
+        $.each(result, function (key, value){
+          const link = "/board/v2/view/" + value.id + "?currentPage=" +  currentPage;
+          $("table.board").append("<tr class='row'>" +
+                  "<td class='check'><input id='"+ value.id +"' type='checkbox'></td>" +
+                  "<td>" + value.id +"</td>" +
+                  "<td><a href='" + link + "'>" + value.title +"</a></td>" +
+                  "<td>" + value.writer + "</td>" +
+                  "<td>" + value.rdate +"</td>"
+                  + "</tr>")
+
+          //todo: 페이징 처리도 다시 해줘야함
+        });
+      },
+      error: function (xhr, status, error) {
+        alert(error);
+      }
+    });
+  }
+
+  /**
+   * 단일 체크박스 삭제버튼 생성/삭제
+   */
+  $(document).on("change", "td.check > input[type=checkbox]", function (){
+    if ($(this).is(":checked") == true) {
+      $(this).closest("tr").append("<td name='rowDel'><button>삭제하기</button></td>");
+    }else{
+      $(this).closest("tr").children("td[name=rowDel]").remove();
+    }
+    //todo: 체크박스 선택 생성이 아닌 미리 생성
+  });
+
+  /**
+   * 글쓰기
+   */
+  $("#write").on("click", function (){
+    window.open('/board/v2/form', 'writeForm', 'top=140, left=300, width=500, height=600');
+  });
+
+  /**
+   * 상세보기
+   */
+  $(document).on("click", "td[name=title]" ,function (){
+    const $id = $(this).siblings("td.check").children("input[type=checkbox]").attr("id");
+    const currentPage = [[${pageBlock.currentPage}]];
+    window.open('/board/v2/view/' + $id + "?currentPage=" + currentPage, 'writeForm', 'top=140, left=300, width=500, height=600');
+  });
+
+  /**
+   * 목록 수 체크
+   */
+  $(document).on("change", "select[name=pageCount]", function (){
+    const currentPage = [[${pageBlock.currentPage}]];
+    const searchWord = [[${searchWord}]];
+    if (searchWord === ""){
+      location.href = "/board/v2?currentPage=" + currentPage + "&numberPerPage=" + $(this).val().slice(0, -1);
+    }else{
+      const searchCondition = [[${searchCondition}]];
+      location.href = "/board/v2?currentPage=" + currentPage + "&numberPerPage=" + $(this).val().slice(0, -1) +
+              "&searchCondition=" + searchCondition + "&searchWord=" + searchWord;
+    }
+  });
+
+
+</script>
+</body>
+</html>
