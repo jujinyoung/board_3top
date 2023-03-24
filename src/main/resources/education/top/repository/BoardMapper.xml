@@ -50,4 +50,41 @@
     <select id="getTotalRecords" resultType="Integer">
         SELECT COUNT(*) FROM Board
     </select>
+
+    <select id="getTotalRecordsByWord" resultType="Integer">
+        SELECT COUNT(*) FROM Board
+        WHERE REGEXP_LIKE(
+        <choose>
+            <when test='searchCondition.equals("01")'>
+                title
+            </when>
+            <otherwise>
+                writer
+            </otherwise>
+        </choose>
+        , #{searchWord}, 'i')
+    </select>
+
+    <select id="findAllByWord" resultType="Board">
+        SELECT b.*
+        FROM (
+                 SELECT ROWNUM no, t.*
+                 FROM(
+                     SELECT id, title, writer, content, rdate, readed
+                     FROM Board
+                     WHERE REGEXP_LIKE(
+                     <choose>
+                         <when test='searchCondition.equals("01")'>
+                             title
+                         </when>
+                        <otherwise>
+                            writer
+                        </otherwise>
+                     </choose>
+                   , #{searchWord}, 'i')
+                     ORDER BY id DESC
+                     )t
+             )b
+        WHERE b.no BETWEEN #{begin} and #{end}
+    </select>
 </mapper>

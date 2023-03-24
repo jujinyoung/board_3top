@@ -19,10 +19,20 @@ public class BoardRestController {
     private BoardService boardService;
 
     @PostMapping("/del")
-    public ArrayList<Board> deleteMulti(@RequestParam(value="checkBoxArr[]") List<Long> checkBoxArr,
-                                       @RequestParam(defaultValue = "1") int currentPage){
+    public List<Board> deleteMulti(@RequestParam(value="checkBoxArr[]") List<Long> checkBoxArr,
+                                   @RequestParam(defaultValue = "1") int currentPage,
+                                   @RequestParam(defaultValue = "5") int numberPerPage,
+                                   @RequestParam(defaultValue = "01") String searchCondition,
+                                   @RequestParam(defaultValue = "") String searchWord){
 
         boardService.deleteMulti(checkBoxArr);
-        return boardService.findAllBoard(currentPage, 5);
+
+        List<Board> boards = null;
+        if (searchWord.equals("")){
+            boards = boardService.findAllBoard(currentPage, numberPerPage);
+        }else {
+            boards = boardService.getAllBoardByWord(currentPage, numberPerPage, searchCondition, searchWord);
+        }
+        return boards;
     }
 }

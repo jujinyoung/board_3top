@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface BoardMapper {
 
-    ArrayList<Board> findAll(int begin, int end);
+    List<Board> findAll(int begin, int end);
 
     Board findById(Long id);
 
@@ -24,4 +24,8 @@ public interface BoardMapper {
     void read(Long id);
 
     Integer getTotalRecords();
+
+    Integer getTotalRecordsByWord(String searchCondition, String searchWord);
+
+    List<Board> findAllByWord(int begin, int end, String searchCondition, String searchWord);
 }

@@ -1,13 +1,16 @@
 package education.top.domain;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter @Setter @ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board {
@@ -23,7 +26,14 @@ public class Board {
 
     @NotBlank
     private String content;
-    private LocalDate rdate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH.mm.ss")
+    private LocalDateTime rdate;
     private int readed;
 
+    public Board(String title, String writer, String content) {
+        this.title = title;
+        this.writer = writer;
+        this.content = content;
+    }
 }
