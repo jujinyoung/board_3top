@@ -32,7 +32,7 @@ public class BoardControllerV2 {
                         @RequestParam(defaultValue = "") String searchWord){
 
         //검색 여부
-        List<Board> boards = null;
+        List<Board> boards;
         int totalRecords;
         if (searchWord.equals("")){
             boards = boardService.findAllBoard(currentPage, numberPerPage);
@@ -46,8 +46,9 @@ public class BoardControllerV2 {
         int numberOfPageBlock = 10;
         int totalPage = (int) Math.ceil((double) totalRecords/numberPerPage) == 0 ? 1 : (int) Math.ceil((double) totalRecords/numberPerPage);
         PageBlock pageBlock = PageService.pagingService(currentPage, numberPerPage, numberOfPageBlock, totalPage);
+        int boardNo = totalRecords - (currentPage-1) * numberPerPage;
 
-        model.addAttribute("begin", PageService.begin(currentPage, numberPerPage));
+        model.addAttribute("boardNo", boardNo);
         model.addAttribute("searchCondition", searchCondition);
         model.addAttribute("searchWord", searchWord);
         model.addAttribute("comCodes", boardService.getComCodes());
@@ -58,6 +59,7 @@ public class BoardControllerV2 {
 
     @GetMapping("/form")
     public String writeForm(Model model, @CookieValue(value = "writer", required = false) String writer){
+        log.debug("쿠키에 저장된 작성자명={}", writer);
         WriteForm board = new WriteForm();
         if (writer != null){
             board.setWriteCheck(true);
@@ -66,27 +68,6 @@ public class BoardControllerV2 {
         }
         model.addAttribute("board", board);
         return "board/v2/form";
-    }
-
-    @PostMapping("/form")
-    public String write(@Validated @ModelAttribute("board") WriteForm writeForm, BindingResult bindingResult, HttpServletResponse response){
-        if (bindingResult.hasErrors()){
-            log.debug("write validation errors= {}", bindingResult);
-            return "board/v2/form";
-        }
-
-        Board board = new Board(writeForm.getTitle(), writeForm.getWriter(), writeForm.getTitle());
-        log.debug("write Title={}",board.getTitle());
-        boardService.write(board);
-
-        //작성자 저장
-        if (writeForm.getWriteCheck()){
-            createCookie(writeForm, response);
-        }else{
-            expiredCookie(response);
-        }
-
-        return "board/v2/success";
     }
 
     @GetMapping("/view/{id}")
@@ -106,17 +87,5 @@ public class BoardControllerV2 {
         boardService.update(board);
         log.debug("수정 완료");
         return "board/v2/success";
-    }
-
-    private void expiredCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("writer", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-    }
-
-    private void createCookie(WriteForm writeForm, HttpServletResponse response) {
-        Cookie cookie = new Cookie("writer", writeForm.getWriter());
-        cookie.setMaxAge(7 * 24 * 60 * 60); //7일
-        response.addCookie(cookie);
     }
 }

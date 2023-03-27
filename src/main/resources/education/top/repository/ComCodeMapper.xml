@@ -7,10 +7,11 @@
     <select id="findALl" resultType="ComCode">
         SELECT
             g.COM_GRP_CD,
-            COM_GRP_DESC,
-            COM_CODE,
-            CODE_DESC
-        FROM  COM_CODE_GRP g JOIN COM_CODE_DTL d
-                         ON g.COM_GRP_CD = d.COM_GRP_CD
+            g.COM_GRP_DESC,
+            d.COM_CODE,
+            d.CODE_DESC
+        FROM  COM_CODE_GRP g
+            , COM_CODE_DTL d
+        WHERE g.COM_GRP_CD = d.COM_GRP_CD
     </select>
 </mapper>

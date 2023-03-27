@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-<form name="board" th:action th:method="post" th:object="${board}">
+<form name="board" th:action th:method="get" th:object="${board}">
     <table>
         <th>게시글 작성</th>
         <tr>
@@ -60,8 +60,32 @@
     <input type="checkbox" id="writerCheck" th:field="*{writeCheck}" style="display: inline">
     <input type="hidden" name="_writerCheck" value="on">
     <label for="writerCheck">작성자 저장</label>
-    <input type="submit" value="작성하기">
+    <button type="button" id="write">작성하기</button>
 </form>
 
+<script>
+    $("#write").on("click", function (){
+        const writeForm = new Object();
+        writeForm.title = $("input[name=title]").val();
+        writeForm.content = $("textarea[name=content]").val();
+        writeForm.writer = $("input[name=writer]").val();
+        writeForm.writeCheck = $("#writerCheck[type=checkbox]").is(":checked") ? true : false;
+        $.ajax({
+            url: "/ajax/write",
+            data: JSON.stringify(writeForm),
+            dataType: "text",
+            type: "POST",
+            contentType: "application/json",
+            cache: false,
+            success: function (result) {
+                opener.parent.location.reload();
+                window.close();
+            },
+            error: function (xhr, status, error) {
+                alert(error);
+            }
+        });
+    });
+</script>
 </body>
 </html>

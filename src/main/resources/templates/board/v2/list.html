@@ -59,7 +59,7 @@
     <th:block th:if="${!#lists.isEmpty(boards)}">
       <tr class="row" th:each="board: ${boards}">
         <td class="check"><input th:id="${board.id}" type="checkbox"></td>
-        <td th:text="${boardStat.index} + ${begin}"></td>
+        <td th:text="${boardNo} - ${boardStat.index}"></td>
         <td th:text="${board.title}" th:name="title"></td>
         <td th:text="${board.writer}"></td>
         <td th:text="${{board.rdate}}"></td>
@@ -158,18 +158,17 @@
       type: "POST",
       cache: false,
       success: function (result) {
-        let begin = ((currentPage-1)*numberPerPage + 1);
+        let begin = result.totalRecords - (currentPage-1) * numberPerPage;
 
         $("tr.row").each(function () {
           $(this).remove();
         });
 
-        $.each(result, function (key, value){
-          const link = "/board/v2/view/" + value.id + "?currentPage=" +  currentPage;
+        $.each(result.boards, function (key, value){
           $("table.board").append("<tr class='row'>" +
-                  "<td class='check'><input id='"+ begin +"' type='checkbox'></td>" +
-                  "<td>" + begin++ +"</td>" +
-                  "<td><a href='" + link + "'>" + value.title +"</a></td>" +
+                  "<td class='check'><input id='"+ value.id +"' type='checkbox'></td>" +
+                  "<td>" + begin-- +"</td>" +
+                  "<td name='title'>" + value.title +"</td>" +
                   "<td>" + value.writer + "</td>" +
                   "<td>" + value.rdate +"</td>" +
                   "<td name='rowDel'><button>삭제하기</button></td>"
@@ -196,8 +195,7 @@
    */
   $(document).on("click", "td[name=title]" ,function (){
     const $id = $(this).siblings("td.check").children("input[type=checkbox]").attr("id");
-    const currentPage = [[${pageBlock.currentPage}]];
-    window.open('/board/v2/view/' + $id + "?currentPage=" + currentPage, 'writeForm', 'top=140, left=300, width=500, height=600');
+    window.open('/board/v2/view/' + $id, 'writeForm', 'top=140, left=300, width=500, height=600');
   });
 
   /**

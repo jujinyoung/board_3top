@@ -5,9 +5,9 @@
 <mapper namespace="education.top.repository.BoardMapper">
 
     <select id="findAll" resultType="Board">
-        SELECT b.*
+        SELECT b.id, b.title, b.writer, b.content, b.rdate, b.readed
         FROM (
-            SELECT ROWNUM no, t.*
+            SELECT ROWNUM no, t.id, t.title, t.writer, t.content, t.rdate, t.readed
             FROM(
                 SELECT id, title, writer, content, rdate, readed FROM Board
                 ORDER BY id DESC
@@ -66,9 +66,9 @@
     </select>
 
     <select id="findAllByWord" resultType="Board">
-        SELECT b.*
+        SELECT b.id, b.title, b.writer, b.content, b.rdate, b.readed
         FROM (
-                 SELECT ROWNUM no, t.*
+                 SELECT ROWNUM no, t.id, t.title, t.writer, t.content, t.rdate, t.readed
                  FROM(
                      SELECT id, title, writer, content, rdate, readed
                      FROM Board

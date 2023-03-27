@@ -1,14 +1,11 @@
 package education.top.web.form;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Getter @Setter
+@Getter @Setter @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class WriteForm {
