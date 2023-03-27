@@ -45,11 +45,9 @@ public class BoardControllerV2 {
         //페이징 처리
         int numberOfPageBlock = 10;
         int totalPage = (int) Math.ceil((double) totalRecords/numberPerPage) == 0 ? 1 : (int) Math.ceil((double) totalRecords/numberPerPage);
-        log.debug("totalpages ={}", totalPage);
         PageBlock pageBlock = PageService.pagingService(currentPage, numberPerPage, numberOfPageBlock, totalPage);
-        log.debug("마지막페이지 = {}", pageBlock.getEndOfPageBlock());
 
-        log.trace("공통코드 = {}", boardService.getComCodes());
+        model.addAttribute("begin", PageService.begin(currentPage, numberPerPage));
         model.addAttribute("searchCondition", searchCondition);
         model.addAttribute("searchWord", searchWord);
         model.addAttribute("comCodes", boardService.getComCodes());

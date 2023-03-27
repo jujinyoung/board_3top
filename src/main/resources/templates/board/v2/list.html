@@ -59,10 +59,11 @@
     <th:block th:if="${!#lists.isEmpty(boards)}">
       <tr class="row" th:each="board: ${boards}">
         <td class="check"><input th:id="${board.id}" type="checkbox"></td>
-        <td th:text="${boardStat.count}"></td>
+        <td th:text="${boardStat.index} + ${begin}"></td>
         <td th:text="${board.title}" th:name="title"></td>
         <td th:text="${board.writer}"></td>
         <td th:text="${{board.rdate}}"></td>
+        <td name='rowDel'><button>삭제하기</button></td>
       </tr>
     </th:block>
   </table>
@@ -118,6 +119,7 @@
   $("#del").on("click", function () {
     const checkBoxArr = [];
     const currentPage = [[${pageBlock.currentPage}]];
+    const numberPerPage = [[${pageBlock.numberPerPage}]];
     $("td.check > input[type=checkbox]").each(function () {
       if ($(this).is(":checked") == true) {
         checkBoxArr.push($(this).attr("id"));
@@ -127,7 +129,7 @@
     console.log(checkBoxArr);
     if (!$.isEmptyObject(checkBoxArr)){
       alert(checkBoxArr.length + "건 삭제 완료");
-      $.deleteRow(checkBoxArr, currentPage);
+      $.deleteRow(checkBoxArr, currentPage, numberPerPage);
     }else {
       alert("선택된 체크박스가 없습니다.")
     }
@@ -139,12 +141,13 @@
   $(document).on("click", "td[name=rowDel] > button", function (){
     const checkBoxArr = [];
     const currentPage = [[${pageBlock.currentPage}]];
+    const numberPerPage = [[${pageBlock.numberPerPage}]];
     const $check = $(this).closest("td").siblings(".check").children("input[type=checkbox]").attr("id");
     checkBoxArr.push($check);
-    $.deleteRow(checkBoxArr,currentPage);
+    $.deleteRow(checkBoxArr,currentPage, numberPerPage);
   });
 
-  $.deleteRow = function (checkBoxArr, currentPage){
+  $.deleteRow = function (checkBoxArr, currentPage, numberPerPage){
     $.ajax({
       url: "/ajax/del",
       data: {
@@ -155,6 +158,8 @@
       type: "POST",
       cache: false,
       success: function (result) {
+        let begin = ((currentPage-1)*numberPerPage + 1);
+
         $("tr.row").each(function () {
           $(this).remove();
         });
@@ -162,11 +167,12 @@
         $.each(result, function (key, value){
           const link = "/board/v2/view/" + value.id + "?currentPage=" +  currentPage;
           $("table.board").append("<tr class='row'>" +
-                  "<td class='check'><input id='"+ value.id +"' type='checkbox'></td>" +
-                  "<td>" + value.id +"</td>" +
+                  "<td class='check'><input id='"+ begin +"' type='checkbox'></td>" +
+                  "<td>" + begin++ +"</td>" +
                   "<td><a href='" + link + "'>" + value.title +"</a></td>" +
                   "<td>" + value.writer + "</td>" +
-                  "<td>" + value.rdate +"</td>"
+                  "<td>" + value.rdate +"</td>" +
+                  "<td name='rowDel'><button>삭제하기</button></td>"
                   + "</tr>")
 
           //todo: 페이징 처리도 다시 해줘야함
@@ -177,18 +183,6 @@
       }
     });
   }
-
-  /**
-   * 단일 체크박스 삭제버튼 생성/삭제
-   */
-  $(document).on("change", "td.check > input[type=checkbox]", function (){
-    if ($(this).is(":checked") == true) {
-      $(this).closest("tr").append("<td name='rowDel'><button>삭제하기</button></td>");
-    }else{
-      $(this).closest("tr").children("td[name=rowDel]").remove();
-    }
-    //todo: 체크박스 선택 생성이 아닌 미리 생성
-  });
 
   /**
    * 글쓰기
