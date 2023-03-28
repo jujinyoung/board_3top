@@ -69,7 +69,7 @@
   </table>
 
   <div>
-    <ul>
+    <ul class="pagination">
       <li th:if="${pageBlock.isPrev}">
         <a th:href="@{/board/v2(currentPage=${pageBlock.startOfPageBlock-1}, numberPerPage=${pageBlock.numberPerPage}, searchCondition=${searchCondition}, searchWord=${searchWord})}">&lsaquo;</a>
       </li>
@@ -97,6 +97,7 @@
   </select>
 
 <script th:inline="javascript">
+  let currentPage = [[${pageBlock.currentPage}]];
   /**
    * 체크박스 전체 클릭
    */
@@ -109,7 +110,6 @@
     $("td.check > input[type=checkbox]").each(function (){
       if ($(this).is(":checked") == true && check == true) return;
       $(this).attr("checked", check);
-      $(this).prop("checked", check).trigger("change");
     });
   });
 
@@ -118,7 +118,6 @@
    */
   $("#del").on("click", function () {
     const checkBoxArr = [];
-    const currentPage = [[${pageBlock.currentPage}]];
     const numberPerPage = [[${pageBlock.numberPerPage}]];
     $("td.check > input[type=checkbox]").each(function () {
       if ($(this).is(":checked") == true) {
@@ -126,8 +125,9 @@
       }
     });
 
-    console.log(checkBoxArr);
     if (!$.isEmptyObject(checkBoxArr)){
+      console.log($("td.check > input[type=checkbox]").length);
+      if ($("td.check > input[type=checkbox]").length == checkBoxArr.length) currentPage--
       alert(checkBoxArr.length + "건 삭제 완료");
       $.deleteRow(checkBoxArr, currentPage, numberPerPage);
     }else {
@@ -140,10 +140,10 @@
    */
   $(document).on("click", "td[name=rowDel] > button", function (){
     const checkBoxArr = [];
-    const currentPage = [[${pageBlock.currentPage}]];
     const numberPerPage = [[${pageBlock.numberPerPage}]];
     const $check = $(this).closest("td").siblings(".check").children("input[type=checkbox]").attr("id");
     checkBoxArr.push($check);
+    if ($("td.check > input[type=checkbox]").length == 1) currentPage--;
     $.deleteRow(checkBoxArr,currentPage, numberPerPage);
   });
 
@@ -164,6 +164,7 @@
           $(this).remove();
         });
 
+        //게시판 다시 그리기
         $.each(result.boards, function (key, value){
           $("table.board").append("<tr class='row'>" +
                   "<td class='check'><input id='"+ value.id +"' type='checkbox'></td>" +
@@ -173,9 +174,30 @@
                   "<td>" + value.rdate +"</td>" +
                   "<td name='rowDel'><button>삭제하기</button></td>"
                   + "</tr>")
-
-          //todo: 페이징 처리도 다시 해줘야함
         });
+
+        //페이지 다시 처리
+        $("ul.pagination").empty();
+        const pageBlock = result.pageBlock;
+        pageBlock.currentPage = pageBlock.currentPage > pageBlock.endOfPageBlock ? pageBlock.endOfPageBlock : pageBlock.currentPage;
+        if (pageBlock.prev){
+          $("ul.pagination").append("<li><a href='/board/v2?currentPage=" + parseInt(pageBlock.startOfPageBlock-1) + "&numberPerPage="
+                  + pageBlock.numberPerPage + "&searchCondition=" + result.searchCondition + "&searchWord=" + result.searchWord + "'>&lsaquo;</a></li>");
+        }
+        for (let i = pageBlock.startOfPageBlock; i<= pageBlock.endOfPageBlock; i++){
+          if (pageBlock.currentPage == i){
+            $("ul.pagination").append("<li style='font-weight: bold'><span>" + i +"</span></li>");
+          }else{
+            $("ul.pagination").append("<li><a href='/board/v2?currentPage=" + i + "&numberPerPage="
+                    + pageBlock.numberPerPage + "&searchCondition=" + result.searchCondition + "&searchWord=" + result.searchWord + "'>"+ i +"</a></li>");
+          }
+        }
+        if (pageBlock.next){
+          $("ul.pagination").append("<li><a href='/board/v2?currentPage=" + parseInt(pageBlock.endOfPageBlock+1) + "&numberPerPage="
+                  + pageBlock.numberPerPage + "&searchCondition=" + result.searchCondition + "&searchWord=" + result.searchWord + "'>&rsaquo;</a></li>");
+        }
+
+        $("#totalCheck").prop("checked", false);
       },
       error: function (xhr, status, error) {
         alert(error);

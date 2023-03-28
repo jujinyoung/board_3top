@@ -1,5 +1,7 @@
 package education.top.web;
 
+import education.top.com.paging.PageBlock;
+import education.top.com.paging.PageService;
 import education.top.domain.Board;
 import education.top.service.BoardService;
 import education.top.web.form.WriteForm;
@@ -43,9 +45,17 @@ public class BoardRestController {
             totalRecords = boardService.getTotalRecordsByWord(searchCondition, searchWord);
         }
 
+        //페이징 처리
+        int numberOfPageBlock = 10;
+        int totalPage = (int) Math.ceil((double) totalRecords/numberPerPage) == 0 ? 1 : (int) Math.ceil((double) totalRecords/numberPerPage);
+        PageBlock pageBlock = PageService.pagingService(currentPage, numberPerPage, numberOfPageBlock, totalPage);
+
         Map<String, Object> map = new HashMap<>();
         map.put("boards", boards);
         map.put("totalRecords", totalRecords);
+        map.put("pageBlock", pageBlock);
+        map.put("searchCondition", searchCondition);
+        map.put("searchWord", searchWord);
         return map;
     }
 

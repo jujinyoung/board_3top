@@ -2,8 +2,9 @@ package education.top.com.paging;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 @AllArgsConstructor
 public class PageBlock {
     private int currentPage;    //현재 페이지

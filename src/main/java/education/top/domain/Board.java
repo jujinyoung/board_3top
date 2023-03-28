@@ -1,5 +1,6 @@
 package education.top.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,6 +28,7 @@ public class Board {
     @NotBlank
     private String content;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH.mm.ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH.mm.ss")
     private LocalDateTime rdate;
     private int readed;
