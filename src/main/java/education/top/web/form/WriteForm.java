@@ -10,14 +10,14 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class WriteForm {
 
-    @NotBlank
+    @NotBlank(message = "제목을 작성해 주세요.")
     private String title;
 
-    @NotBlank
-    @Size(min = 1, max = 6)
+    @NotBlank(message = "작성자를 작성해 주세요.")
+    @Size(min = 1, max = 6, message = "작성자 길이는 최대 6글자 입니다.")
     private String writer;
 
-    @NotBlank
+    @NotBlank(message = "내용을 입력해 주세요.")
     private String content;
 
     private Boolean writeCheck;

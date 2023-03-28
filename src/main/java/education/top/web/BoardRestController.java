@@ -7,7 +7,10 @@ import education.top.service.BoardService;
 import education.top.web.form.WriteForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +63,7 @@ public class BoardRestController {
     }
 
     @PostMapping("/write")
-    public String write(@RequestBody @Validated WriteForm writeForm, HttpServletResponse response){
+    public ResponseEntity<Object> write(@RequestBody @Validated WriteForm writeForm, HttpServletResponse response){
         log.debug(writeForm.toString());
         Board board = new Board(writeForm.getTitle(), writeForm.getWriter(), writeForm.getTitle());
         boardService.write(board);
@@ -74,7 +77,7 @@ public class BoardRestController {
             expiredCookie(response);
         }
 
-        return "ok";
+        return new ResponseEntity(writeForm, HttpStatus.OK);
     }
 
     private void expiredCookie(HttpServletResponse response) {

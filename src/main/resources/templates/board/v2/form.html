@@ -38,22 +38,19 @@
         <tr>
             <td>제목</td>
             <td width="400">
-                <input th:field="*{title}" type="text" th:errorclass="field-error">
-                <div class="field-error" th:errors="*{title}">제목 검증 오류</div>
+                <input th:field="*{title}" type="text">
             </td>
         </tr>
         <tr>
             <td height="300">내용</td>
             <td width="400" height="300">
-                <textarea th:field="*{content}" th:errorclass="field-error" style="height: 300px; width: 400px"></textarea>
-                <div class="field-error" th:errors="*{content}">내용 검증 오류</div>
+                <textarea th:field="*{content}" style="height: 300px; width: 400px"></textarea>
             </td>
         </tr>
         <tr>
             <td>작성자</td>
             <td width="400">
-                <input th:field="*{writer}" type="text" th:errorclass="field-error">
-                <div class="field-error" th:errors="*{writer}">작성자 검증 오류</div>
+                <input th:field="*{writer}" type="text">
             </td>
         </tr>
     </table>
@@ -73,16 +70,30 @@
         $.ajax({
             url: "/ajax/write",
             data: JSON.stringify(writeForm),
-            dataType: "text",
+            dataType: "json",
             type: "POST",
-            contentType: "application/json",
+            contentType: "application/json; charset=UTF-8",
             cache: false,
-            success: function (result) {
-                opener.parent.location.reload();
-                window.close();
+            success: function (result, textStatus, xhr) {
+                console.log(xhr.status);
+                if (xhr.status == 201){
+                    $(".field-error").remove();
+                    $.each(Object.keys(result), function (i, item){
+                        console.log("에러필드 = " + item + ", 순서 = " + i + ", 에러메세지 = " + result[item]);
+                        const $error = $("<div class='field-error'>" + result[item] + "</div>");
+                        if (item === "content"){
+                            $error.insertAfter("textarea[name=" + item + "]");
+                        }else {
+                            $error.insertAfter("input[name="+ item +"]");
+                        }
+                    });
+                }else{
+                    opener.parent.location.reload();
+                    window.close();
+                }
             },
             error: function (xhr, status, error) {
-                alert(error);
+                console.log("error = " + error);
             }
         });
     });
