@@ -18,14 +18,14 @@ public class Board {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "제목을 작성해 주세요.")
     private String title;
 
     @NotBlank
     @Size(min = 1, max = 6)
     private String writer;
 
-    @NotBlank
+    @NotBlank(message = "내용을 입력해 주세요.")
     private String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH.mm.ss", timezone = "Asia/Seoul")

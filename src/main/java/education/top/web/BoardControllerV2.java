@@ -77,15 +77,4 @@ public class BoardControllerV2 {
         model.addAttribute("currentPage", currentPage);
         return "board/v2/view";
     }
-
-    @PostMapping("/view/{id}")
-    public String edit(@PathVariable Long id, @Validated @ModelAttribute Board board, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            log.debug("edit validation errors= {}", bindingResult);
-            return "board/v2/view";
-        }
-        boardService.update(board);
-        log.debug("수정 완료");
-        return "board/v2/success";
-    }
 }

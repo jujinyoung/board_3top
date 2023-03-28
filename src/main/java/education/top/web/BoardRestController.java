@@ -80,6 +80,13 @@ public class BoardRestController {
         return new ResponseEntity(writeForm, HttpStatus.OK);
     }
 
+    @PostMapping("/view/{id}")
+    public ResponseEntity<Object> edit(@PathVariable Long id, @Validated @RequestBody Board board){
+        boardService.update(board);
+        log.debug("수정 완료");
+        return new ResponseEntity(board, HttpStatus.OK);
+    }
+
     private void expiredCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("writer", null);
         cookie.setMaxAge(0);

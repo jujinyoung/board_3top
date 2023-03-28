@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * 해결link = https://www.codejava.net/frameworks/spring-boot/rest-api-request-validation-examples
  */
 @Slf4j
-//@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice(annotations = RestController.class)
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
