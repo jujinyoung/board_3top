@@ -63,7 +63,7 @@ public class BoardRestController {
     }
 
     @PostMapping("/write")
-    public ResponseEntity<Object> write(@RequestBody @Validated WriteForm writeForm, HttpServletResponse response){
+    public ResponseEntity write(@RequestBody @Validated WriteForm writeForm, HttpServletResponse response){
         log.debug(writeForm.toString());
         Board board = new Board(writeForm.getTitle(), writeForm.getWriter(), writeForm.getTitle());
         boardService.write(board);
@@ -77,27 +77,27 @@ public class BoardRestController {
             expiredCookie(response);
         }
 
-        return new ResponseEntity(writeForm, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/view/{id}")
-    public ResponseEntity<Object> edit(@PathVariable Long id, @Validated @RequestBody Board board){
+    public ResponseEntity edit(@PathVariable Long id, @Validated @RequestBody Board board){
         boardService.update(board);
         log.debug("수정 완료");
-        return new ResponseEntity(board, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     private void expiredCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("writer", null);
         cookie.setMaxAge(0);
-        cookie.setPath("/");
+        cookie.setPath("/board/v2");
         response.addCookie(cookie);
     }
 
     private void createCookie(String writer, HttpServletResponse response) {
         Cookie cookie = new Cookie("writer", writer);
         cookie.setMaxAge(7 * 24 * 60 * 60); //7일
-        cookie.setPath("/");
+        cookie.setPath("/board/v2");
         response.addCookie(cookie);
     }
 }
