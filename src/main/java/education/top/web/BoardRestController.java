@@ -35,6 +35,10 @@ public class BoardRestController {
                                   @RequestParam(defaultValue = "5") int numberPerPage,
                                   @RequestParam(defaultValue = "01") String searchCondition,
                                   @RequestParam(defaultValue = "") String searchWord){
+        log.debug("currentPage={}", currentPage);
+        log.debug("numberPerPage={}", numberPerPage);
+        log.debug("searchWord={}", searchWord);
+        log.debug("searchCondition={}", searchCondition);
 
         boardService.deleteMulti(checkBoxArr);
 
@@ -77,14 +81,14 @@ public class BoardRestController {
             expiredCookie(response);
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(writeForm);
     }
 
     @PostMapping("/view/{id}")
     public ResponseEntity edit(@PathVariable Long id, @Validated @RequestBody Board board){
         boardService.update(board);
         log.debug("수정 완료");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(board);
     }
 
     private void expiredCookie(HttpServletResponse response) {

@@ -61,11 +61,13 @@
 
 <script>
     $("#write").on("click", function (){
-        const writeForm = new Object();
-        writeForm.title = $("input[name=title]").val();
-        writeForm.content = $("textarea[name=content]").val();
-        writeForm.writer = $("input[name=writer]").val();
-        writeForm.writeCheck = $("#writerCheck[type=checkbox]").is(":checked") ? true : false;
+        const writeForm = {
+            title : $("input[name=title]").val(),
+            content : $("textarea[name=content]").val(),
+            writer : $("input[name=writer]").val(),
+            writeCheck: $("#writerCheck[type=checkbox]").is(":checked") ? true : false
+        }
+
         $.ajax({
             url: "/ajax/write",
             data: JSON.stringify(writeForm),

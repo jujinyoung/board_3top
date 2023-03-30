@@ -148,11 +148,16 @@
   });
 
   $.deleteRow = function (checkBoxArr, currentPage, numberPerPage){
+    const searchCondition = [[${searchCondition}]];
+    const searchWord = [[${searchWord}]];
     $.ajax({
       url: "/ajax/del",
       data: {
         checkBoxArr,
-        currentPage
+        currentPage,
+        numberPerPage,
+        searchCondition,
+        searchWord
       },
       dataType:"json",
       type: "POST",
