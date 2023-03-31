@@ -138,7 +138,7 @@
   /**
    * 단일 삭제
    */
-  $(document).on("click", "td[name=rowDel] > button", function (){
+  $("table.board").on("click", "td[name=rowDel] > button", function (){
     const checkBoxArr = [];
     const numberPerPage = [[${pageBlock.numberPerPage}]];
     const $check = $(this).closest("td").siblings(".check").children("input[type=checkbox]").attr("id");
@@ -220,7 +220,7 @@
   /**
    * 상세보기
    */
-  $(document).on("click", "td[name=title]" ,function (){
+  $("table.board").on("click", "td[name=title]" ,function (){
     const $id = $(this).siblings("td.check").children("input[type=checkbox]").attr("id");
     window.open('/board/v2/view/' + $id, 'writeForm', 'top=140, left=300, width=500, height=600');
   });
@@ -228,7 +228,7 @@
   /**
    * 목록 수 체크
    */
-  $(document).on("change", "select[name=pageCount]", function (){
+  $("body").on("change", "select[name=pageCount]", function (){
     const currentPage = [[${pageBlock.currentPage}]];
     const searchWord = [[${searchWord}]];
     if (searchWord === ""){

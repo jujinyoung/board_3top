@@ -55,11 +55,12 @@
 <script th:inline="javascript">
   $("#edit").on("click", function (){
     const id = [[${board.id}]];
-    const board = new Object();
-    board.title = $("input[name=title]").val();
-    board.content = $("textarea[name=content]").val();
-    board.writer = $("input[name=writer]").val();
-    board.id = id;
+    const board = {
+      title: $("input[name=title]").val(),
+      content: $("textarea[name=content]").val(),
+      writer: $("input[name=writer]").val(),
+      id: id
+    };
     $.ajax({
       url: "/ajax/view/" + id,
       data: JSON.stringify(board),
