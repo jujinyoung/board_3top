@@ -1,18 +1,16 @@
 package education.top.repository;
 
 import education.top.domain.Board;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper
-public interface BoardMapper {
+public interface BoardRepository {
 
     List<Board> findAll(int begin, int end);
 
     Board findById(Long id);
 
-    void write(Board board);
+    Board write(Board board);
 
     void delete(Long id);
 

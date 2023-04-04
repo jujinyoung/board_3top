@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -31,6 +32,12 @@ public class Board {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH.mm.ss")
     private LocalDateTime rdate;
     private int readed;
+
+    public Board(Long id, String title, String content) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+    }
 
     public Board(String title, String writer, String content) {
         this.title = title;

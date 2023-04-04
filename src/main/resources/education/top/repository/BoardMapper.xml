@@ -19,6 +19,12 @@
     <insert id="write" parameterType="Board">
         INSERT INTO Board
         VALUES (board_sequence.nextval, #{title}, #{writer}, #{content}, sysdate, 0)
+        <selectKey keyProperty="id" resultType="Long" order="AFTER">
+            SELECT board_sequence.currval FROM dual
+        </selectKey>
+<!--        <selectKey keyProperty="rdate" resultType="Date" order="AFTER">-->
+<!--            SELECT rdate FROM dual-->
+<!--        </selectKey>-->
     </insert>
 
     <select id="findById" resultType="Board">

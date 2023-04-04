@@ -5,6 +5,7 @@ import education.top.com.paging.PageService;
 import education.top.domain.Board;
 import education.top.service.BoardService;
 import education.top.web.form.WriteForm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,11 +24,11 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/ajax")
 public class BoardRestController {
 
-    @Autowired
-    private BoardService boardService;
+    private final BoardService boardService;
 
     @PostMapping("/del")
     public Map<String, Object> deleteMulti(@RequestParam(value="checkBoxArr[]") List<Long> checkBoxArr,

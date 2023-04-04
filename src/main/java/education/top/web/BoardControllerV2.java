@@ -5,6 +5,7 @@ import education.top.com.paging.PageService;
 import education.top.domain.Board;
 import education.top.service.BoardService;
 import education.top.web.form.WriteForm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +20,11 @@ import java.util.List;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/board/v2")
 public class BoardControllerV2 {
 
-    @Autowired
-    private BoardService boardService;
+    private final BoardService boardService;
 
     @GetMapping
     public String board(Model model, @RequestParam(defaultValue = "1") int currentPage,

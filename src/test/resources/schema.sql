@@ -1,0 +1,19 @@
+CREATE TABLE Board(
+                      id NUMBER PRIMARY KEY
+    , title VARCHAR2(100)
+    , writer VARCHAR2(20)
+    , content CLOB
+    , rdate TIMESTAMP
+    , readed NUMBER
+);
+CREATE TABLE COM_CODE_GRP(
+                             COM_GRP_CD VARCHAR2(10) PRIMARY KEY
+    , COM_GRP_DESC VARCHAR2(20)
+);
+CREATE TABLE COM_CODE_DTL(
+                             COM_CODE VARCHAR2(10)
+    , COM_GRP_CD VARCHAR2(10)
+    , CODE_DESC VARCHAR2(20)
+
+    ,CONSTRAINT COM_CODE_DTL_PK PRIMARY KEY(COM_CODE, COM_GRP_CD)
+);
