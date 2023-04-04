@@ -1,4 +1,4 @@
-package education.top.repository;
+package education.top.repository.oracle;
 
 import education.top.domain.Board;
 import org.apache.ibatis.annotations.Mapper;

@@ -1,15 +1,15 @@
-package education.top.repository;
+package education.top.repository.oracle;
 
 import education.top.domain.Board;
+import education.top.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class OracleBoardRepository implements BoardRepository{
+public class OracleBoardRepository implements BoardRepository {
 
     private final BoardMapper boardMapper;
 

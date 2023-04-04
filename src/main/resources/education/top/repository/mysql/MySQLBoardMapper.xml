@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="education.top.repository.mysql.MySQLBoardMapper">
+    <select id="findAll" resultType="Board">
+        SELECT id, title, writer, content, rdate, readed
+        FROM board
+        ORDER BY id DESC
+        limit #{begin}, #{end}
+    </select>
+
+    <insert id="write" parameterType="Board" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Board (title, writer, content, rdate, readed)
+        VALUES (#{title}, #{writer}, #{content}, sysdate(), 0)
+    </insert>
+
+    <select id="findById" resultType="Board">
+        SELECT id, title, writer, content, rdate, readed FROM Board
+        WHERE id = #{id}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM Board WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteMulti">
+        DELETE FROM Board WHERE id IN
+        <foreach item="ids" index="index" collection="list" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="Board">
+        UPDATE Board SET title = #{title}, content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <update id="read">
+        UPDATE Board SET readed = readed+1
+        WHERE id = #{id}
+    </update>
+
+    <select id="getTotalRecords" resultType="Integer">
+        SELECT COUNT(*) FROM Board
+    </select>
+
+    <select id="getTotalRecordsByWord" resultType="Integer">
+        SELECT COUNT(*) FROM Board
+        WHERE REGEXP_LIKE(
+        <choose>
+            <when test='searchCondition.equals("01")'>
+                title
+            </when>
+            <otherwise>
+                writer
+            </otherwise>
+        </choose>
+        , #{searchWord}, 'i')
+    </select>
+
+    <select id="findAllByWord" resultType="Board">
+        SELECT id, title, writer, content, rdate, readed
+        FROM board
+        WHERE REGEXP_LIKE(
+        <choose>
+            <when test='searchCondition.equals("01")'>
+                title
+            </when>
+            <otherwise>
+                writer
+            </otherwise>
+        </choose>
+        , #{searchWord}, 'i')
+        ORDER BY id DESC
+        limit #{begin}, #{end}
+    </select>
+</mapper>

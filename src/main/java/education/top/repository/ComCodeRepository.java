@@ -1,12 +1,10 @@
 package education.top.repository;
 
 import education.top.domain.ComCode;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper
-public interface ComCodeMapper {
+public interface ComCodeRepository {
 
     List<ComCode> findALl();
 }

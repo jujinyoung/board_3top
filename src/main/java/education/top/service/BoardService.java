@@ -4,9 +4,8 @@ import education.top.com.paging.PageService;
 import education.top.domain.Board;
 import education.top.domain.ComCode;
 import education.top.repository.BoardRepository;
-import education.top.repository.ComCodeMapper;
+import education.top.repository.ComCodeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    private final ComCodeMapper comCodeMapper;
+    private final ComCodeRepository comCodeRepository;
 
     public List<Board> findAllBoard(int currentPage, int numberPerPage){
         int begin = PageService.begin(currentPage, numberPerPage);
@@ -58,7 +57,7 @@ public class BoardService {
     }
 
     public List<ComCode> getComCodes(){
-        return comCodeMapper.findALl();
+        return comCodeRepository.findALl();
     }
 
     public List<Board> getAllBoardByWord(int currentPage, int numberPerPage, String searchCondition, String searchWord){

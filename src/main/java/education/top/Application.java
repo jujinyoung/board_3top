@@ -1,11 +1,11 @@
 package education.top;
 
-import education.top.config.OracleConfig;
+import education.top.config.MySQLConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-@Import(OracleConfig.class)
+@Import(MySQLConfig.class)
 @SpringBootApplication(scanBasePackages = "education.top.web")
 public class Application {
 

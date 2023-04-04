@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="education.top.repository.oracle.ComCodeMapper">
+
+    <select id="findALl" resultType="ComCode">
+        SELECT
+            g.COM_GRP_CD,
+            g.COM_GRP_DESC,
+            d.COM_CODE,
+            d.CODE_DESC
+        FROM  COM_CODE_GRP g
+            , COM_CODE_DTL d
+        WHERE g.COM_GRP_CD = d.COM_GRP_CD
+    </select>
+</mapper>
