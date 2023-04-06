@@ -29,3 +29,7 @@ logging:
       top:
         web: debug
 
+file:
+  dir: D:/uploadtest/
+
+

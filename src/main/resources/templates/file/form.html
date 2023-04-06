@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">\
+    <title>Title</title>
+</head>
+<body>
+    <form th:action method="post" enctype="multipart/form-data">
+        <ul>
+<!--            <li>상품명<input type="text" name="itemName"></li>-->
+            <li>파일<input type="file" name="file"></li>
+<!--            <li>여러파일<input type="file" multiple="multiple" name="multiFiles"></li>-->
+        </ul>
+        <input type="submit"/>
+    </form>
+    <button><a th:href="@{/file/view}">전체 파일 보기</a></button>
+</body>
+</html>

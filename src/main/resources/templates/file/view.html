@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table, td{
+            margin: auto;
+            border: black 1px solid;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>번호</td>
+            <td>파일명</td>
+        </tr>
+        <tr th:each="fileStore : ${fileStores}">
+            <td th:text="${fileStore.id}"></td>
+            <td><a th:href="|/file/download/${fileStore.id}|" th:text="${fileStore.uploadFileName}"></a></td>
+        </tr>
+    </table>
+</body>
+</html>

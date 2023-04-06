@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="education.top.repository.mysql.MySQLFileStoreMapper">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into filestore (uploadFileName, storeFileName)
+        values (#{uploadFileName}, #{storeFileName})
+    </insert>
+
+    <select id="findAll" resultType="fileStore">
+        select id, uploadFileName, storeFileName
+        FROM filestore
+        ORDER BY id
+    </select>
+
+    <select id="findById" resultType="fileStore">
+        select id, uploadFileName, storeFileName
+        FROM filestore
+        WHERE id = #{id}
+    </select>
+</mapper>
